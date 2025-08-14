@@ -7,3 +7,7 @@ edition = "2024"
 axum = "0.7"
 serde_json = "1.0.142"
 tokio = { version = "1.0", features = ["full"] }
+
+[[bin]]
+name = "goodbye-api"
+path = "src/main.rs"

@@ -69,6 +69,15 @@ go-api/
     └── helpers/             # Test utilities
 ```
 
+```
+internal/
+├── api/          # HTTP handlers and routing (presentation layer)
+├── services/     # Business logic (business layer)
+├── repository/   # Data access (data layer)
+├── domain/       # Business entities/models (domain layer)
+└── config/       # Configuration (infrastructure layer)
+```
+
 ---
 
 ## Directory Overview

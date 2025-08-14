@@ -1,0 +1,39 @@
+basePath: /
+host: localhost:10471
+info:
+  contact: {}
+  description: A simple Go API with health and goodbye endpoints
+  title: Go API
+  version: "1.0"
+paths:
+  /goodbyeworld:
+    get:
+      consumes:
+      - application/json
+      description: Returns a goodbye message
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Goodbye, World!
+          schema:
+            type: string
+      summary: Goodbye world endpoint
+      tags:
+      - goodbye
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Returns the health status of the API
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Health check endpoint
+      tags:
+      - health
+swagger: "2.0"

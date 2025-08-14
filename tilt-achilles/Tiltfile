@@ -1,6 +1,6 @@
 # --- goodbye (Rust) API ---
 local_resource(
-    'goodbye-api',
+    'goodbye-world',
     # Build and start the API
     'cd ../goodbye && cargo build --release && (nohup cargo run --release > /dev/null 2>&1 & echo $! > /tmp/goodbye.pid)',
     deps=['../goodbye/src/**/*.rs', '../goodbye/Cargo.toml'],
@@ -35,3 +35,36 @@ local_resource(
     ignore=['../xerxes/docs/**'],
     resource_deps=[],
 )
+
+# --- Redis Services ---
+docker_compose('docker-compose.redis.yml')
+
+# --- Redis Management Tools ---
+local_resource(
+    'redis-cli',
+    'sleep 10 && docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping',
+    resource_deps=['redis'],
+    serve_cmd='while true; do sleep 30; done',
+    links=[
+        link('redis://localhost:6379', 'Redis Standalone'),
+        link('http://localhost:26379', 'Redis Sentinel 1'),
+        link('http://localhost:26380', 'Redis Sentinel 2'),
+        link('http://localhost:26381', 'Redis Sentinel 3'),
+    ],
+    # Wait for Redis container to be healthy
+    readiness_probe=probe(
+        initial_delay_secs=20,
+        period_secs=3,
+        timeout_secs=5,
+        failure_threshold=5,
+        exec=exec_action(['docker', 'exec', 'tilt-achilles-redis-1', 'redis-cli', '-a', 'redis123', 'ping'])
+    ),
+)
+
+# --- Redis Health Check ---
+# local_resource(
+#     'redis-health',
+#     'docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping',
+#     resource_deps=[],
+#     serve_cmd='watch -n 5 "docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping"',
+# )

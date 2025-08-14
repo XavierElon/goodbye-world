@@ -1,0 +1,1 @@
+{"rustc":7136650888353168503,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[6506612875004659559,"build_script_build",false,2651429971004715388]],"local":[{"RerunIfChanged":{"output":"debug/build/goodbye-677df46a8aeb8c97/output","paths":["proto/goodbye.proto","proto"]}}],"rustflags":[],"config":0,"compile_kind":0}

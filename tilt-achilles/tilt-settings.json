@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "title": "Xerxes & Goodbye APIs",
+    "icon": "��"
+  },
+  "resources": {
+    "goodbye-api": {
+      "labels": ["api", "rust", "goodbye"]
+    },
+    "xerxes-api": {
+      "labels": ["api", "go", "xerxes"]
+    }
+  }
+}

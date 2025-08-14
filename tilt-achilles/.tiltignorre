@@ -1,0 +1,8 @@
+# Ignore build artifacts and temporary files
+**/target/
+**/tmp/
+**/node_modules/
+**/.git/
+**/.DS_Store
+**/*.log
+**/docs/

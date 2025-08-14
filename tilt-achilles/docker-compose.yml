@@ -1,0 +1,38 @@
+services:
+  goodbye-api:
+    build:
+      context: ./goodbye
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - RUST_LOG=info
+    volumes:
+      - ./goodbye:/usr/src/app
+      - goodbye-target:/usr/src/app/target
+    networks:
+      - api-network
+
+  xerxes-api:
+    build:
+      context: ./xerxes
+      dockerfile: Dockerfile
+    ports:
+      - '10471:10471'
+    environment:
+      - API_HOST=localhost:10471
+    volumes:
+      - ./xerxes:/app
+      - xerxes-modules:/go/pkg/mod
+    networks:
+      - api-network
+    depends_on:
+      - goodbye-api
+
+volumes:
+  goodbye-target:
+  xerxes-modules:
+
+networks:
+  api-network:
+    driver: bridge

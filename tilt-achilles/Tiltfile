@@ -1,56 +1,37 @@
-# Tiltfile for running both goodbye (Rust) and xerxes (Go) APIs
-
-# Load environment variables
-load('ext://dotenv', 'dotenv')
-dotenv()
-
-# Define the working directory for each service
-local_resource(
-    'goodbye-build',
-    'cd goodbye && cargo build --release',
-    deps=['goodbye/src/**/*.rs', 'goodbye/Cargo.toml'],
-    ignore=['goodbye/target/**']
-)
-
-local_resource(
-    'xerxes-build',
-    'cd xerxes && go build -o tmp/main ./cmd/server',
-    deps=['xerxes/**/*.go', 'xerxes/go.mod'],
-    ignore=['xerxes/tmp/**', 'xerxes/docs/**']
-)
-
-# Run the goodbye (Rust) API
+# --- goodbye (Rust) API ---
 local_resource(
     'goodbye-api',
-    'cd goodbye && cargo run --release',
-    resource_deps=['goodbye-build'],
-    serve_cmd='cd goodbye && cargo run --release',
+    # Build and start the API
+    'cd ../goodbye && cargo build --release && (nohup cargo run --release > /dev/null 2>&1 & echo $! > /tmp/goodbye.pid)',
+    deps=['../goodbye/src/**/*.rs', '../goodbye/Cargo.toml'],
+    ignore=['../goodbye/target/**'],
+    resource_deps=[],
     links=[
         link('http://localhost:3000', 'Goodbye API'),
-        link('http://localhost:3000/health', 'Health Check')
-    ]
+        link('http://localhost:3000/health', 'Health Check'),
+    ],
 )
 
-# Run the xerxes (Go) API
+# --- xerxes (Go) API ---
 local_resource(
     'xerxes-api',
-    'cd xerxes && go run ./cmd/server',
-    resource_deps=['xerxes-build'],
-    serve_cmd='cd xerxes && go run ./cmd/server',
+    'cd ../xerxes && go build ./cmd/server',
+    deps=['../xerxes/**/*.go', '../xerxes/go.mod', '../xerxes/go.sum'],
+    ignore=['../xerxes/tmp/**', '../xerxes/docs/**'],
+    serve_cmd='cd ../xerxes && go run ./cmd/server',
+    resource_deps=[],
     links=[
         link('http://localhost:10471', 'Xerxes API'),
         link('http://localhost:10471/health', 'Health Check'),
-        link('http://localhost:10471/swagger/index.html', 'Swagger Docs')
-    ]
+        link('http://localhost:10471/swagger/index.html', 'Swagger Docs'),
+    ],
 )
 
-# Generate Swagger docs for xerxes
+# --- Generate Swagger docs for xerxes ---
 local_resource(
     'xerxes-swagger',
-    'cd xerxes && swag init -g cmd/server/main.go --parseDependency --parseInternal',
-    deps=['xerxes/**/*.go'],
-    ignore=['xerxes/docs/**'],
-    resource_deps=['xerxes-api']
+    'cd ../xerxes && swag init -g cmd/server/main.go --parseDependency --parseInternal',
+    deps=['../xerxes/**/*.go'],
+    ignore=['../xerxes/docs/**'],
+    resource_deps=[],
 )
-
-docker_compose('docker-compose.yml')

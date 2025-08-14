@@ -4,7 +4,7 @@ services:
     image: redis:7.2-alpine
     ports:
       - '6379:6379'
-    command: redis-server --requirepass redis123
+    command: redis-server --requirepass redis123 --replica-announce-ip 127.0.0.1
     networks:
       - api-network
     healthcheck:

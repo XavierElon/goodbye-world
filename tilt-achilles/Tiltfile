@@ -42,8 +42,8 @@ docker_compose('docker-compose.redis.yml')
 # --- Redis Management Tools ---
 local_resource(
     'redis-cli',
-    'docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping',
-    resource_deps=['docker-compose.redis.yml'],
+    'sleep 10 && docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping',
+    resource_deps=['redis'],
     serve_cmd='docker exec tilt-achilles-redis-1 redis-cli -a redis123',
     links=[
         link('redis://localhost:6379', 'Redis Standalone'),
@@ -51,6 +51,14 @@ local_resource(
         link('http://localhost:26380', 'Redis Sentinel 2'),
         link('http://localhost:26381', 'Redis Sentinel 3'),
     ],
+    # Wait for Redis container to be healthy
+    readiness_probe=probe(
+        initial_delay_secs=20,
+        period_secs=3,
+        timeout_secs=5,
+        failure_threshold=5,
+        exec=exec_action(['docker', 'exec', 'tilt-achilles-redis-1', 'redis-cli', '-a', 'redis123', 'ping'])
+    ),
 )
 
 # --- Redis Health Check ---

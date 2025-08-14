@@ -1,0 +1,9 @@
+[package]
+name = "goodbye-world"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.7"
+serde_json = "1.0.142"
+tokio = { version = "1.0", features = ["full"] }

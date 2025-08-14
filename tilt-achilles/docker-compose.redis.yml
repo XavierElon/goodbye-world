@@ -7,6 +7,7 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./redis-config/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-data:/data
     networks:
       - api-network
     healthcheck:
@@ -58,3 +59,7 @@ services:
 networks:
   api-network:
     driver: bridge
+
+volumes:
+  redis-data:
+    driver: local

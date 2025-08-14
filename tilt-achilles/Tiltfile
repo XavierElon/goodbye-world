@@ -44,7 +44,7 @@ local_resource(
     'redis-cli',
     'sleep 10 && docker exec tilt-achilles-redis-1 redis-cli -a redis123 ping',
     resource_deps=['redis'],
-    serve_cmd='docker exec tilt-achilles-redis-1 redis-cli -a redis123',
+    serve_cmd='while true; do sleep 30; done',
     links=[
         link('redis://localhost:6379', 'Redis Standalone'),
         link('http://localhost:26379', 'Redis Sentinel 1'),

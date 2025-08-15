@@ -24,6 +24,8 @@ func main() {
     log.Println("Server running on http://localhost:10471")
 	log.Println("Health check: http://localhost:10471/health")
 	log.Println("Goodbye world: http://localhost:10471/goodbyeworld")
+	log.Println("Auth send code: http://localhost:10471/auth/send-code")
+	log.Println("Auth verify: http://localhost:10471/auth/verify")
 	log.Println("Swagger docs: http://localhost:10471/swagger/index.html")
 	log.Println("Press Ctrl+C to stop")
 	

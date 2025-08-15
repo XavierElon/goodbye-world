@@ -15,8 +15,13 @@ func RegisterRoutes() {
 	goodbyeService := services.NewGoodbyeService()
     goodbyeHandler := handlers.NewGoodbyeHandler(goodbyeService)
 
+    authService := services.NewAuthService()
+    authHandler := handlers.NewAuthHandler(authService)
+
     http.HandleFunc("/health", healthHandler.Health)
     http.HandleFunc("/goodbyeworld", goodbyeHandler.GoodbyeWorld)
+    http.HandleFunc("/auth/send-code", authHandler.SendVerificationCode)
+    http.HandleFunc("/auth/verify", authHandler.VerifyCodeAndLogin)
     
     // Serve swagger.json directly
     http.HandleFunc("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,62 @@
 basePath: /
+definitions:
+  go-api_internal_domain.AuthResponse:
+    properties:
+      token:
+        $ref: '#/definitions/go-api_internal_domain.AuthToken'
+      user:
+        $ref: '#/definitions/go-api_internal_domain.User'
+    type: object
+  go-api_internal_domain.AuthToken:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      token_type:
+        type: string
+    type: object
+  go-api_internal_domain.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      is_verified:
+        type: boolean
+      last_login:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  go-api_internal_domain.UserLogin:
+    properties:
+      code:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - code
+    - phone_number
+    type: object
+  go-api_internal_domain.VerificationRequest:
+    properties:
+      phone_number:
+        type: string
+    required:
+    - phone_number
+    type: object
+  go-api_internal_domain.VerificationResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
 host: localhost:10471
 info:
   contact: {}
@@ -6,6 +64,66 @@ info:
   title: Go API
   version: "1.0"
 paths:
+  /auth/send-code:
+    post:
+      consumes:
+      - application/json
+      description: Sends an SMS verification code to the user's phone number
+      parameters:
+      - description: Phone number
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/go-api_internal_domain.VerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-api_internal_domain.VerificationResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Send verification code
+      tags:
+      - auth
+  /auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the code and logs in or registers the user
+      parameters:
+      - description: Phone number and code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/go-api_internal_domain.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-api_internal_domain.AuthResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Verify code and login/register
+      tags:
+      - auth
   /goodbyeworld:
     get:
       consumes:
